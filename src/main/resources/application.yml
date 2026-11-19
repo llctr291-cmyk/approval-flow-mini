@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: approval-flow-mini
+  datasource:
+    url: jdbc:h2:mem:approval;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+flow:
+  events:
+    # 补拉接口只返回 N 毫秒前已提交的事件，避免"小 seq 晚提交"导致游标跳过（见 docs/state-machine.md）
+    read-lag-ms: 300
+    max-page-size: 500
+  compensation:
+    retry-interval-ms: 5000
+    max-attempts: 5
+  idempotency:
+    ttl-hours: 24
+
+logging:
+  level:
+    com.demo.approval: INFO
